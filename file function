@@ -1,0 +1,123 @@
+## 目录结构
+
+项目总体由以下几个主要部分组成：
+- GPT-SoVITS-TTS：语音转换和文本转语音系统
+- RWKV：大型语言模型后端
+- SillyTavern：AI聊天前端
+- 其他辅助工具和资源
+
+## 主要功能模块文件清单
+
+### 1. 核心入口文件
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `GPT-SoVITS-TTS/webui.py` | GPT-SoVITS的Web界面主入口，负责初始化环境、启动各模块进程 |
+| `RWKV/backend-python/main.py` | RWKV后端服务的入口文件，创建FastAPI应用实例，注册路由 |
+| `SillyTavern/server.js` | SillyTavern聊天前端服务器入口 |
+
+### 2. GPT-SoVITS-TTS 模块
+
+#### 2.1 核心功能
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `GPT-SoVITS-TTS/GPT_SoVITS/inference_webui.py` | TTS推理WebUI，用于文本到语音的转换 |
+| `GPT-SoVITS-TTS/GPT_SoVITS/s1_train.py` | GPT模型训练脚本，训练文本到语音模型 |
+| `GPT-SoVITS-TTS/GPT_SoVITS/s2_train.py` | SoVITS模型训练脚本，训练声音合成模型 |
+| `GPT-SoVITS-TTS/GPT_SoVITS/AR/models.py` | 自回归模型定义，GPT语音生成核心 |
+| `GPT-SoVITS-TTS/GPT_SoVITS/tts/models.py` | TTS模型组件定义 |
+| `GPT-SoVITS-TTS/GPT_SoVITS/configs/s1.yaml` | GPT模型配置文件 |
+| `GPT-SoVITS-TTS/GPT_SoVITS/configs/s2.json` | SoVITS模型配置文件 |
+
+#### 2.2 数据集准备工具
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `GPT-SoVITS-TTS/GPT_SoVITS/prepare_datasets/1-get-text.py` | 获取和处理文本数据 |
+| `GPT-SoVITS-TTS/GPT_SoVITS/prepare_datasets/2-get-hubert-wav32k.py` | 提取音频特征，生成HuBERT特征 |
+| `GPT-SoVITS-TTS/GPT_SoVITS/prepare_datasets/3-get-semantic.py` | 提取语义标记，用于文本到语音的训练 |
+
+#### 2.3 音频处理工具
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `GPT-SoVITS-TTS/tools/slice_audio.py` | 音频切片工具，将长音频切分成训练用的短片段 |
+| `GPT-SoVITS-TTS/tools/cmd-denoise.py` | 语音降噪工具，提高音频质量 |
+| `GPT-SoVITS-TTS/tools/uvr5/webui.py` | UVR5人声分离WebUI，分离人声和伴奏 |
+| `GPT-SoVITS-TTS/tools/uvr5/mdxnet.py` | MDXNet模型用于音频分离处理 |
+| `GPT-SoVITS-TTS/tools/subfix_webui.py` | 音频文本标注工具，用于标注训练数据 |
+
+#### 2.4 语音识别 (ASR)
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `GPT-SoVITS-TTS/tools/asr/funasr_asr.py` | 中文ASR工具，使用达摩院FunASR |
+| `GPT-SoVITS-TTS/tools/asr/fasterwhisper_asr.py` | 英语/日语ASR工具，使用Faster Whisper |
+| `GPT-SoVITS-TTS/tools/asr/config.py` | ASR配置文件，定义支持的模型和语言 |
+
+#### 2.5 国际化和工具类
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `GPT-SoVITS-TTS/tools/i18n/i18n.py` | 国际化支持，多语言界面 |
+| `GPT-SoVITS-TTS/tools/my_utils.py` | 工具函数集合 |
+| `GPT-SoVITS-TTS/config.py` | 主配置文件，设置全局参数 |
+
+### 3. RWKV 模块
+
+#### 3.1 后端服务
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `RWKV/backend-python/main.py` | 后端服务入口文件 |
+| `RWKV/backend-python/webui_server.py` | WebUI服务器实现 |
+| `RWKV/backend-python/global_var.py` | 全局变量管理 |
+
+#### 3.2 路由和API
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `RWKV/backend-python/routes/completion.py` | 文本补全API路由 |
+| `RWKV/backend-python/routes/config.py` | 配置管理API路由 |
+| `RWKV/backend-python/routes/state_cache.py` | 状态缓存管理API路由 |
+| `RWKV/backend-python/routes/midi.py` | MIDI处理API路由，用于音乐生成 |
+| `RWKV/backend-python/routes/file_process.py` | 文件处理API路由 |
+| `RWKV/backend-python/routes/misc.py` | 杂项功能API路由 |
+
+#### 3.3 工具和实用函数
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `RWKV/backend-python/utils/rwkv.py` | RWKV模型相关工具 |
+| `RWKV/backend-python/utils/torch.py` | PyTorch配置工具 |
+| `RWKV/backend-python/utils/ngrok.py` | ngrok连接工具，用于公网访问 |
+| `RWKV/backend-python/utils/log.py` | 日志中间件 |
+
+### 4. SillyTavern 模块
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `SillyTavern/server.js` | 服务器入口文件 |
+| `SillyTavern/public/scripts/extensions/*` | 扩展功能脚本 |
+| `SillyTavern/public/scripts/kai_settings.js` | 设置管理 |
+| `SillyTavern/public/scripts/textgen-settings.js` | 文本生成设置 |
+
+### 5. 辅助工具和库
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `ffmpeg/` | 音视频处理工具库 |
+| `★必装运行库/` | 必要的运行时依赖库 |
+
+### 6. 资源和配置
+
+| 文件路径 | 功能说明 |
+|---------|---------|
+| `GPT-SoVITS-TTS/GPT_SoVITS/pretrained_models/` | 预训练模型存放目录 |
+| `SoVITS_weights/` | SoVITS训练权重存放目录 |
+| `GPT_weights/` | GPT训练权重存放目录 |
+| `资源站/` | 额外资源文件 |
+| `头像/` | 角色头像图片 |
+| `角色卡/` | 角色设定卡片 |
+| `表情包/` | 表情图片资源 |
